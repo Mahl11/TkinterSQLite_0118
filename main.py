@@ -488,3 +488,89 @@ box_hasil = tk.Frame(app, bg="#2d3559", highlightbackground="#4f5b8a", highlight
 box_hasil.pack(fill="x", padx=35, pady=8)
 
 # Label judul kecil di dalam kotak diagnosis
+lbl_hasil_head = tk.Label(
+    box_hasil, 
+    text="HASIL DIAGNOSIS", 
+    font=("Arial", 8, "bold"), 
+    bg="#2d3559", 
+    fg="#c7d2fe"
+)
+# Menempatkan label judul kotak diagnosis
+lbl_hasil_head.pack()
+
+# Label status tingkat risiko hasil diagnosis
+lbl_hasil_teks = tk.Label(
+    box_hasil, 
+    text="Belum Ada Data Dianalisis", 
+    font=("Arial", 11, "bold"), 
+    bg="#2d3559", 
+    fg=WARNA_SUBTEKS
+)
+# Menempatkan label status risiko
+lbl_hasil_teks.pack(pady=(2, 2))
+
+
+# --- WIDGET TABEL DATA RIWAYAT PASIEN (TTK.TREEVIEW) ---
+
+# Menginisialisasi objek pengaturan gaya (style) ttk
+style = ttk.Style()
+# Menggunakan tema 'clam' agar styling warna tabel dapat diatur secara kustom
+style.theme_use("clam")
+# Mengatur konfigurasi warna latar baris, warna teks, dan tinggi baris tabel
+style.configure("Treeview", background="#2d3559", foreground="#ffffff", fieldbackground="#2d3559", font=("Arial", 9), rowheight=22)
+# Mengatur konfigurasi warna latar dan warna teks header kolom tabel
+style.configure("Treeview.Heading", background="#1e2438", foreground=WARNA_PINK, font=("Arial", 9, "bold"))
+# Menyetel warna baris ketika dipilih (selected) dengan aksen warna pink rose
+style.map("Treeview", background=[("selected", WARNA_PINK)], foreground=[("selected", "#ffffff")])
+
+# Frame penampung widget tabel Treeview dan label ringkasan
+table_frame = tk.Frame(app, bg=WARNA_BG)
+# Menempatkan frame tabel agar merenggang memenuhi sisa ruang jendela
+table_frame.pack(fill="both", expand=True, padx=20, pady=(2, 10))
+
+# Label ringkasan untuk menampilkan jumlah total baris pasien tersimpan
+lbl_total_data = tk.Label(table_frame, text="Total Riwayat: 0 data pasien", font=("Arial", 8, "italic"), bg=WARNA_BG, fg=WARNA_SUBTEKS)
+# Menempatkan label total data di sisi kiri atas tabel
+lbl_total_data.pack(anchor="w", pady=(0, 2))
+
+# Mendefinisikan nama-nama identitas kolom tabel Treeview
+kolom = ("id", "nama", "usia", "gula", "bmi", "ortu", "hasil")
+# Membuat widget Treeview dengan 7 kolom tanpa menampilkan kolom hierarki bawaan (#0)
+tree = ttk.Treeview(table_frame, columns=kolom, show="headings", height=6)
+
+# Mengatur teks judul yang tampil di header masing-masing kolom
+tree.heading("id", text="ID")
+tree.heading("nama", text="Nama Pasien")
+tree.heading("usia", text="Usia")
+tree.heading("gula", text="Gula Darah")
+tree.heading("bmi", text="BMI")
+tree.heading("ortu", text="Ortu")
+tree.heading("hasil", text="Hasil Prediksi")
+
+# Mengatur lebar piksel dan perataan teks (alignment) untuk tiap-tiap kolom
+tree.column("id", width=30, anchor="center")
+tree.column("nama", width=120)
+tree.column("usia", width=45, anchor="center")
+tree.column("gula", width=85, anchor="center")
+tree.column("bmi", width=55, anchor="center")
+tree.column("ortu", width=65, anchor="center")
+tree.column("hasil", width=105, anchor="center")
+
+# Menempatkan widget tabel Treeview agar memenuhi ukuran frame penampung
+tree.pack(fill="both", expand=True)
+
+# Menghubungkan event klik baris tabel (<<TreeviewSelect>>) dengan fungsi on_select_baris
+tree.bind("<<TreeviewSelect>>", on_select_baris)
+
+# Memuat data dari basis data ke tabel secara otomatis saat aplikasi pertama kali dijalankan
+muat_tabel()
+
+
+# ------------------------------------------------------------------------------
+# [LAYER 5] MAIN EXECUTION (Menjalankan Loop Utama Aplikasi)
+# ------------------------------------------------------------------------------
+
+# Memastikan script hanya berjalan saat dieksekusi langsung (bukan saat diimpor sebagai modul)
+if __name__ == "__main__":
+    # Menjalankan loop event utama GUI Tkinter agar jendela tetap terbuka dan responsif
+    app.mainloop()
