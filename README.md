@@ -28,5 +28,5 @@ Aplikasi desktop berbasis Python Tkinter untuk memprediksi tingkat risiko diabet
 ### Basis Data SQLite
 ![SQLite Viewer](screenshots/prediksi_diabetes.db.png)
 
-###FULLL
+### SCREENSHOOT FULL
 <img width="1535" height="959" alt="image" src="https://github.com/user-attachments/assets/cf394a86-102f-478c-8c22-4b7231fd739a" />
