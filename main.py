@@ -438,3 +438,53 @@ btn_cek = tk.Button(
     font=("Arial", 10, "bold"), 
     padx=14, 
     pady=6, 
+    bd=0, 
+    relief="flat", 
+    cursor="hand2"
+)
+# Menempatkan tombol Cek Risiko di sisi kiri frame tombol
+btn_cek.pack(side="left", padx=6)
+
+# 2. Tombol 'Lihat Data' untuk menyegarkan tampilan tabel dari database
+btn_lihat = tk.Button(
+    btn_frame, 
+    text="Lihat Data", 
+    command=muat_tabel, 
+    bg=WARNA_PINK, 
+    fg="#ffffff", 
+    font=("Arial", 10, "bold"), 
+    padx=14, 
+    pady=6, 
+    bd=0, 
+    relief="flat", 
+    cursor="hand2"
+)
+# Menempatkan tombol Lihat Data di sebelah tombol Cek Risiko
+btn_lihat.pack(side="left", padx=6)
+
+# 3. Tombol 'Reset' untuk mengosongkan seluruh formulir input
+btn_reset = tk.Button(
+    btn_frame, 
+    text="Reset", 
+    command=reset_form, 
+    bg=WARNA_RESET, 
+    fg="#ffffff", 
+    font=("Arial", 10, "bold"), 
+    padx=14, 
+    pady=6, 
+    bd=0, 
+    relief="flat", 
+    cursor="hand2"
+)
+# Menempatkan tombol Reset di sebelah tombol Lihat Data
+btn_reset.pack(side="left", padx=6)
+
+
+# --- WIDGET KOTAK BINGKAI HASIL DIAGNOSIS ---
+
+# Frame kotak hasil diagnosis dengan border garis tipis
+box_hasil = tk.Frame(app, bg="#2d3559", highlightbackground="#4f5b8a", highlightthickness=1, padx=20, pady=8)
+# Menempatkan kotak hasil diagnosis memenuhi lebar frame dengan padding 35px
+box_hasil.pack(fill="x", padx=35, pady=8)
+
+# Label judul kecil di dalam kotak diagnosis
