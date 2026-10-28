@@ -308,3 +308,73 @@ def reset_form():
 
 def aksi_cek_risiko():
     """Memvalidasi data input, menghitung tingkat risiko, dan menyimpannya ke database SQLite."""
+    # Mengambil teks nama pasien dan menghapus spasi di awal/akhir
+    nama = entry_nama.get().strip()
+    # Mengambil teks usia pasien dan menghapus spasi
+    usia_str = entry_usia.get().strip()
+    # Mengambil teks kadar gula darah dan menghapus spasi
+    gula_str = entry_gula.get().strip()
+    # Mengambil teks indeks massa tubuh dan menghapus spasi
+    bmi_str = entry_bmi.get().strip()
+    # Mengambil nilai pilihan riwayat orang tua dari combobox
+    riwayat = combo_riwayat.get().strip()
+
+    # Tahap Validasi 1: Memeriksa apakah ada kolom input yang masih kosong
+    if not nama or not usia_str or not gula_str or not bmi_str:
+        # Menampilkan pesan peringatan jika ada data yang belum diisi
+        messagebox.showwarning("Data Belum Lengkap", "Seluruh kolom formulir data pasien wajib diisi!")
+        # Menghentikan eksekusi fungsi agar tidak melanjutkan ke proses simpan
+        return
+
+    # Tahap Validasi 2: Memeriksa kesesuaian tipe data angka dan memastikan bernilai positif
+    try:
+        # Mengonversi teks input usia menjadi tipe data integer
+        usia = int(usia_str)
+        # Mengonversi teks input kadar gula darah menjadi tipe data float
+        gula = float(gula_str)
+        # Mengonversi teks input BMI menjadi tipe data float
+        bmi = float(bmi_str)
+
+        # Memastikan semua nilai numerik tidak boleh bernilai nol atau negatif
+        if usia <= 0 or gula <= 0 or bmi <= 0:
+            # Menampilkan pesan kesalahan jika nilai angka tidak logis
+            messagebox.showerror("Nilai Tidak Valid", "Usia, kadar gula, dan BMI harus berupa angka positif!")
+            # Menghentikan eksekusi fungsi
+            return
+    except ValueError:
+        # Menampilkan pesan kesalahan jika user memasukkan teks bukan angka
+        messagebox.showerror("Format Salah", "Usia harus berupa angka bulat, Gula Darah dan BMI berupa angka desimal!")
+        # Menghentikan eksekusi fungsi
+        return
+
+    # Tahap Perhitungan: Menghitung tingkat risiko diabetes melalui business logic
+    hasil = hitung_prediksi_risiko(gula, bmi, riwayat)
+
+    # Tahap Penyimpanan: Membuka koneksi basis data SQLite
+    conn = buat_koneksi()
+    # Membuat kursor query SQL
+    cur = conn.cursor()
+    # Menjalankan query INSERT dengan parameter binding (?) untuk mencegah celah SQL Injection
+    cur.execute("""
+        INSERT INTO riwayat_pasien (nama_pasien, usia, gula_darah, bmi, riwayat_ortu, hasil_prediksi)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (nama, usia, gula, bmi, riwayat, hasil))
+    # Menyimpan transaksi data secara permanen ke file database
+    conn.commit()
+    # Menutup koneksi basis data setelah proses simpan berhasil
+    conn.close()
+
+    # Tahap Tampilan: Menyesuaikan warna kotak diagnosis berdasarkan tingkat risiko pasien
+    warna = WARNA_RISIKO.get(hasil, WARNA_BIRU)
+    # Mengubah warna latar frame kotak hasil diagnosis
+    box_hasil.config(bg=warna)
+    # Mengubah warna latar dan teks judul kotak hasil diagnosis
+    lbl_hasil_head.config(bg=warna, text="HASIL DIAGNOSIS PASIEN")
+    # Mengubah teks hasil diagnosis dengan nama tingkat risiko kapital dan warna putih
+    lbl_hasil_teks.config(bg=warna, text=f"TINGKAT RISIKO: {hasil.upper()}", fg="#ffffff")
+
+    # Menampilkan notifikasi popup sukses kepada pengguna
+    messagebox.showinfo("Analisis Selesai", f"Data pasien '{nama}' berhasil disimpan!\nHasil Prediksi: Risiko {hasil}")
+
+    # Memperbarui isi tabel Treeview agar data baru yang tersimpan langsung muncul
+    muat_tabel()
