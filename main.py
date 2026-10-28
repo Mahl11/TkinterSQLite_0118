@@ -78,3 +78,63 @@ def ambil_semua_data():
     # 6. Mengembalikan list data pasien ke pemanggil fungsi
     return rows
 
+
+# ------------------------------------------------------------------------------
+# [LAYER 2] BUSINESS LOGIC (Aturan Klasifikasi Risiko Diabetes)
+# ------------------------------------------------------------------------------
+
+def hitung_prediksi_risiko(gula, bmi, riwayat_ortu):
+    """
+    Menghitung tingkat risiko diabetes berdasarkan 5 kategori aturan keputusan:
+    - Gula darah >= 200: Sangat Tinggi (jika BMI >= 30 atau riwayat Ya), selain itu Tinggi.
+    - Gula darah 140-199: Tinggi (jika BMI >= 30 atau riwayat Ya), selain itu Sedang.
+    - Gula darah < 140 dan BMI >= 30: Sedang (jika riwayat Ya), selain itu Waspada.
+    - Gula darah < 140, BMI < 30, riwayat Ya: Waspada.
+    - Gula darah < 140, BMI < 30, riwayat Tidak: Rendah.
+    """
+    # Mengecek apakah pasien memiliki riwayat diabetes keluarga (nilai 'Ya')
+    riwayat_ya = (riwayat_ortu.strip().lower() == "ya")
+
+    # Kasus 1: Gula darah tinggi >= 200 mg/dL (Kondisi Hiperglikemia Berat)
+    if gula >= 200:
+        # Jika obesitas (BMI >= 30) atau ada riwayat keluarga
+        if bmi >= 30 or riwayat_ya:
+            # Tingkat risiko paling kritis
+            return "Sangat Tinggi"
+        # Jika kadar gula tinggi tanpa komplikasi faktor lainnya
+        return "Tinggi"
+
+    # Kasus 2: Gula darah pra-diabetes rentang 140 sampai 199 mg/dL
+    elif 140 <= gula <= 199:
+        # Jika memiliki faktor pemberat BMI tinggi atau faktor keturunan
+        if bmi >= 30 or riwayat_ya:
+            # Tingkat risiko tinggi
+            return "Tinggi"
+        # Jika tidak ada faktor risiko obesitas atau keturunan
+        return "Sedang"
+
+    # Kasus 3, 4, dan 5: Kadar gula darah sewaktu normal (< 140 mg/dL)
+    else:
+        # Pengecekan kondisi berat badan apakah tergolong obesitas (BMI >= 30)
+        if bmi >= 30:
+            # Obesitas dengan faktor genetik menghasilkan risiko sedang, tanpa genetik waspada
+            return "Sedang" if riwayat_ya else "Waspada"
+        # Kondisi berat badan normal (BMI < 30)
+        else:
+            # Normal dengan faktor genetik waspada, jika bersih maka rendah (aman)
+            return "Waspada" if riwayat_ya else "Rendah"
+
+
+# ------------------------------------------------------------------------------
+# [LAYER 3] KONFIGURASI TEMA WARNA (DARK SLATE & PINK ROSE HEALTH ACCENT)
+# ------------------------------------------------------------------------------
+
+# Warna latar belakang jendela utama (Navy Slate gelap yang modern)
+WARNA_BG = "#232946"
+
+# Warna aksen pink rose untuk judul dan identitas tema kesehatan
+WARNA_PINK = "#ff7597"
+
+# Warna biru cerah untuk tombol aksi utama Cek Risiko
+WARNA_BIRU = "#5b8def"
+
