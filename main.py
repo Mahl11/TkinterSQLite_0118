@@ -378,3 +378,63 @@ def aksi_cek_risiko():
 
     # Memperbarui isi tabel Treeview agar data baru yang tersimpan langsung muncul
     muat_tabel()
+
+def on_select_baris(event):
+    """Menampilkan kembali data pasien ke formulir input saat salah satu baris tabel diklik."""
+    # Mendapatkan id baris yang sedang dipilih/diklik pada tabel Treeview
+    sel = tree.selection()
+    # Jika tidak ada baris yang terpilih, keluar dari fungsi
+    if not sel:
+        return
+
+    # Mengambil tuple kumpulan nilai data dari baris yang dipilih
+    nilai = tree.item(sel[0], "values")
+
+    # Mengosongkan isian nama lalu mengisinya dengan nilai dari tabel (kolom indeks 1)
+    entry_nama.delete(0, tk.END)
+    entry_nama.insert(0, nilai[1])
+
+    # Mengosongkan isian usia lalu mengisinya dengan nilai dari tabel (kolom indeks 2)
+    entry_usia.delete(0, tk.END)
+    entry_usia.insert(0, nilai[2])
+
+    # Mengosongkan isian gula darah lalu mengisinya dengan nilai dari tabel (kolom indeks 3)
+    entry_gula.delete(0, tk.END)
+    entry_gula.insert(0, nilai[3])
+
+    # Mengosongkan isian BMI lalu mengisinya dengan nilai dari tabel (kolom indeks 4)
+    entry_bmi.delete(0, tk.END)
+    entry_bmi.insert(0, nilai[4])
+
+    # Menyetel opsi combobox riwayat orang tua dengan nilai dari tabel (kolom indeks 5)
+    combo_riwayat.set(nilai[5])
+
+    # Mengambil teks hasil prediksi dari data baris (kolom indeks 6)
+    hasil = nilai[6]
+    # Menentukan warna kotak diagnosis sesuai tingkat risiko baris terpilih
+    warna = WARNA_RISIKO.get(hasil, WARNA_BIRU)
+    # Memperbarui warna latar kotak diagnosis
+    box_hasil.config(bg=warna)
+    # Memperbarui teks header diagnosis bahwa data berasal dari tabel
+    lbl_hasil_head.config(bg=warna, text="DATA TERPILIH DARI TABEL")
+    # Memperbarui teks status risiko dengan huruf kapital
+    lbl_hasil_teks.config(bg=warna, text=f"RISIKO: {hasil.upper()}", fg="#ffffff")
+
+
+# --- WIDGET TOMBOL AKSI APLIKASI ---
+
+# Frame penampung ketiga tombol aksi formulir
+btn_frame = tk.Frame(app, bg=WARNA_BG)
+# Menempatkan frame tombol dengan jarak vertikal 6px
+btn_frame.pack(pady=6)
+
+# 1. Tombol 'Cek Risiko' untuk memproses input dan menyimpan data ke database
+btn_cek = tk.Button(
+    btn_frame, 
+    text="Cek Risiko", 
+    command=aksi_cek_risiko, 
+    bg=WARNA_BIRU, 
+    fg="#ffffff", 
+    font=("Arial", 10, "bold"), 
+    padx=14, 
+    pady=6, 
