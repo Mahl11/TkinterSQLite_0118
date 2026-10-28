@@ -138,3 +138,93 @@ WARNA_PINK = "#ff7597"
 # Warna biru cerah untuk tombol aksi utama Cek Risiko
 WARNA_BIRU = "#5b8def"
 
+# Warna abu-abu gelap untuk latar belakang kotak isian formulir input
+WARNA_ENTRY_BG = "#384166"
+
+# Warna teks utama putih bersih agar mudah dibaca di atas tema gelap
+WARNA_TEKS = "#fffffe"
+
+# Warna teks pendukung abu-abu kebiruan terang untuk label sekunder
+WARNA_SUBTEKS = "#b8c1ec"
+
+# Warna tombol reset abu-abu netral
+WARNA_RESET = "#4b5563"
+
+# Pemetaan warna status diagnosis untuk mengubah warna kotak diagnosis secara dinamis
+WARNA_RISIKO = {
+    "Rendah": "#10b981",        # Warna Hijau Zamrud (Kondisi Aman / Sehat)
+    "Waspada": "#f59e0b",       # Warna Kuning Emas (Perhatian Khusus)
+    "Sedang": "#f97316",        # Warna Oranye (Tingkat Risiko Moderat)
+    "Tinggi": "#ef4444",        # Warna Merah Terang (Tingkat Risiko Bahaya)
+    "Sangat Tinggi": "#b91c1c"  # Warna Merah Gelap Marun (Kondisi Kritis)
+}
+
+
+# ------------------------------------------------------------------------------
+# [LAYER 4] USER INTERFACE (Membangun Tampilan Antarmuka GUI Tkinter)
+# ------------------------------------------------------------------------------
+
+# Inisialisasi basis data dan pembuatan tabel otomatis saat aplikasi dibuka
+init_db()
+
+# Membuat objek jendela utama Tkinter
+app = tk.Tk()
+
+# Menetapkan teks judul yang tampil di bilah atas (title bar) jendela
+app.title("Prediksi Risiko Diabetes - Ilham Saputra (0118)")
+
+# Menetapkan ukuran dimensi awal jendela aplikasi (lebar 540px, tinggi 860px)
+app.geometry("540x860")
+
+# Menyetel warna latar belakang seluruh jendela aplikasi
+app.configure(bg=WARNA_BG)
+
+
+# --- WIDGET HEADER APLIKASI ---
+
+# Label judul aplikasi dengan simbol tanda tambah medis (+) warna pink rose
+lbl_judul = tk.Label(
+    app, 
+    text="+ Prediksi Risiko Diabetes", 
+    font=("Arial", 16, "bold"), 
+    bg=WARNA_BG, 
+    fg=WARNA_PINK
+)
+# Menempatkan widget label judul dengan jarak atas 15px dan jarak bawah 2px
+lbl_judul.pack(pady=(15, 2))
+
+# Label informasi identitas mahasiswa (Nama, NIM, Matakuliah)
+lbl_identitas = tk.Label(
+    app, 
+    text="Ilham Saputra | 20240140118 | Pemrograman Multiplatform", 
+    font=("Arial", 8), 
+    bg=WARNA_BG, 
+    fg=WARNA_SUBTEKS
+)
+# Menempatkan label identitas mahasiswa tepat di bawah judul aplikasi
+lbl_identitas.pack(pady=(0, 12))
+
+
+# --- WIDGET FORMULIR INPUT DATA PASIEN ---
+
+# Frame penampung seluruh komponen input formulir
+form_container = tk.Frame(app, bg=WARNA_BG)
+# Menempatkan frame formulir dengan padding horizontal 35px agar simetris
+form_container.pack(fill="x", padx=35)
+
+# 1. Komponen Input Nama Pasien
+# Label judul untuk kolom input nama pasien
+lbl_nama = tk.Label(form_container, text="Nama Pasien", font=("Arial", 10, "bold"), bg=WARNA_BG, fg=WARNA_TEKS)
+# Menempatkan label nama di tengah frame
+lbl_nama.pack(anchor="center", pady=(4, 2))
+# Kotak isian teks untuk memasukkan nama pasien
+entry_nama = tk.Entry(form_container, width=38, font=("Arial", 10), bg=WARNA_ENTRY_BG, fg=WARNA_TEKS, insertbackground="white", bd=0, relief="flat")
+# Menempatkan kotak entry nama dengan tinggi dalam (ipady) 5px
+entry_nama.pack(ipady=5, pady=(0, 6))
+
+# 2. Komponen Input Usia Pasien
+# Label judul untuk kolom input usia pasien
+lbl_usia = tk.Label(form_container, text="Usia (Tahun)", font=("Arial", 10, "bold"), bg=WARNA_BG, fg=WARNA_TEKS)
+# Menempatkan label usia di tengah frame
+lbl_usia.pack(anchor="center", pady=(4, 2))
+# Kotak isian teks untuk memasukkan angka usia pasien
