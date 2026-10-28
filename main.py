@@ -228,3 +228,83 @@ lbl_usia = tk.Label(form_container, text="Usia (Tahun)", font=("Arial", 10, "bol
 # Menempatkan label usia di tengah frame
 lbl_usia.pack(anchor="center", pady=(4, 2))
 # Kotak isian teks untuk memasukkan angka usia pasien
+entry_usia = tk.Entry(form_container, width=38, font=("Arial", 10), bg=WARNA_ENTRY_BG, fg=WARNA_TEKS, insertbackground="white", bd=0, relief="flat")
+# Menempatkan kotak entry usia
+entry_usia.pack(ipady=5, pady=(0, 6))
+
+# 3. Komponen Input Kadar Gula Darah Sewaktu
+# Label judul untuk kolom input kadar gula darah
+lbl_gula = tk.Label(form_container, text="Gula Darah Sewaktu (mg/dL)", font=("Arial", 10, "bold"), bg=WARNA_BG, fg=WARNA_TEKS)
+# Menempatkan label gula darah di tengah frame
+lbl_gula.pack(anchor="center", pady=(4, 2))
+# Kotak isian teks untuk memasukkan nilai kadar gula darah pasien
+entry_gula = tk.Entry(form_container, width=38, font=("Arial", 10), bg=WARNA_ENTRY_BG, fg=WARNA_TEKS, insertbackground="white", bd=0, relief="flat")
+# Menempatkan kotak entry gula darah
+entry_gula.pack(ipady=5, pady=(0, 6))
+
+# 4. Komponen Input Indeks Massa Tubuh (BMI)
+# Label judul untuk kolom input indeks massa tubuh
+lbl_bmi = tk.Label(form_container, text="Indeks Massa Tubuh / BMI (kg/m2)", font=("Arial", 10, "bold"), bg=WARNA_BG, fg=WARNA_TEKS)
+# Menempatkan label BMI di tengah frame
+lbl_bmi.pack(anchor="center", pady=(4, 2))
+# Kotak isian teks untuk memasukkan angka indeks massa tubuh pasien
+entry_bmi = tk.Entry(form_container, width=38, font=("Arial", 10), bg=WARNA_ENTRY_BG, fg=WARNA_TEKS, insertbackground="white", bd=0, relief="flat")
+# Menempatkan kotak entry BMI
+entry_bmi.pack(ipady=5, pady=(0, 6))
+
+# 5. Komponen Dropdown Pilihan Riwayat Diabetes Orang Tua
+# Label judul untuk opsi pilihan riwayat diabetes orang tua
+lbl_riwayat = tk.Label(form_container, text="Riwayat Diabetes Orang Tua", font=("Arial", 10, "bold"), bg=WARNA_BG, fg=WARNA_TEKS)
+# Menempatkan label riwayat orang tua di tengah frame
+lbl_riwayat.pack(anchor="center", pady=(4, 2))
+# Widget Combobox untuk memilih opsi Ya atau Tidak secara dropdown
+combo_riwayat = ttk.Combobox(form_container, values=["Ya", "Tidak"], state="readonly", width=36, font=("Arial", 10))
+# Menyetel pilihan bawaan pertama combobox menjadi 'Tidak'
+combo_riwayat.set("Tidak")
+# Menempatkan widget combobox ke dalam frame formulir
+combo_riwayat.pack(ipady=4, pady=(0, 10))
+
+
+# --- FUNGSI-FUNGSI PENGENDALI EVENT (CONTROLLER) ---
+
+def muat_tabel():
+    """Mengambil seluruh data terbaru dari database SQLite dan menampilkannya pada tabel Treeview."""
+    # 1. Melakukan perulangan untuk menghapus setiap baris data lama yang ada di tabel Treeview
+    for item in tree.get_children():
+        # Menghapus item baris satu per satu dari tampilan tabel
+        tree.delete(item)
+
+    # 2. Mengambil data pasien terbaru dari tabel riwayat_pasien di database
+    rows = ambil_semua_data()
+
+    # 3. Melakukan perulangan untuk memasukkan setiap baris data baru ke dalam tabel Treeview
+    for row in rows:
+        # Memasukkan nilai baris ke posisi paling bawah tabel Treeview
+        tree.insert("", tk.END, values=row)
+
+    # 4. Memperbarui teks label statistik total data pasien yang tersimpan
+    lbl_total_data.config(text=f"Total Riwayat: {len(rows)} data pasien")
+
+def reset_form():
+    """Mengosongkan seluruh kolom input formulir dan mereset status kotak diagnosis ke kondisi awal."""
+    # Menghapus teks pada kotak isian nama pasien dari indeks 0 sampai akhir
+    entry_nama.delete(0, tk.END)
+    # Menghapus teks pada kotak isian usia pasien dari indeks 0 sampai akhir
+    entry_usia.delete(0, tk.END)
+    # Menghapus teks pada kotak isian kadar gula darah dari indeks 0 sampai akhir
+    entry_gula.delete(0, tk.END)
+    # Menghapus teks pada kotak isian BMI dari indeks 0 sampai akhir
+    entry_bmi.delete(0, tk.END)
+    # Mengembalikan nilai combobox riwayat orang tua ke pilihan default 'Tidak'
+    combo_riwayat.set("Tidak")
+    # Mengembalikan warna latar kotak hasil diagnosis ke warna gelap semula
+    box_hasil.config(bg="#2d3559")
+    # Mengembalikan teks judul kotak diagnosis
+    lbl_hasil_head.config(bg="#2d3559", text="HASIL DIAGNOSIS")
+    # Mengembalikan teks isi kotak diagnosis ke status default
+    lbl_hasil_teks.config(bg="#2d3559", text="Belum Ada Data Dianalisis", fg=WARNA_SUBTEKS)
+    # Memindahkan fokus kursor keyboard kembali ke input nama pasien
+    entry_nama.focus()
+
+def aksi_cek_risiko():
+    """Memvalidasi data input, menghitung tingkat risiko, dan menyimpannya ke database SQLite."""
